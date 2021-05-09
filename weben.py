@@ -51,5 +51,6 @@ class mainProgram():
 
 
 if __name__ == "__main__":
+    print("\33[0;37;40m") 
     weben = mainProgram()
     weben.scan_ports()

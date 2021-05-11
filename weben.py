@@ -25,8 +25,8 @@ class mainProgram():
         self.port = args.port
 
     def scan_ports(self):
-        nmap = nmap3.Nmap()
-        nmapResults = nmap.scan_top_ports(f"{self.target}",args="")
+        nmap = nmap3.NmapScanTechniques()
+        nmapResults = nmap.nmap_tcp_scan(f"{self.target}",args="")
         openPorts = nmapResults.keys()
         listOfAllPorts = nmapResults[self.target]['ports']
         listOfOpenPorts = [port['portid'] for port in listOfAllPorts if port['state'] == 'open']
@@ -34,23 +34,34 @@ class mainProgram():
         print(f"Total number of open ports : {numberOfOpenPorts}")
         print("List of Open Ports : ")
         for port in listOfOpenPorts:
-            print(port)
+            print(f"Port {port}")
             
-        stringOfOpenPorts = ' '.join(listOfOpenPorts)
+        stringOfOpenPorts = ','.join(listOfOpenPorts)
         print("[*] Launching Service Detection...")
-        for p in nmap.nmap_version_detection(self.target, args=f"-p {stringOfOpenPorts}")[self.target]['ports']:
+        nmap = nmap3.Nmap()
+        versionScan = nmap.nmap_version_detection(self.target, args=f"-p {stringOfOpenPorts}") 
+        webservers = []
+        for p in versionScan[self.target]['ports']:
             currentPort = p['portid']
+            print(f"[*] Port {currentPort} runs the following service : ")
+            for key, value in p['service'].items():
+                print(f"--{key.title()} : {value}")    
             currentService = p['service']['name']
-            print(f"Port {currentPort} runs the following service : {currentService}")
             if currentService == 'http':
-                print(f"[*] Launching Directory Enumeration on port {currentPort}...")
-                print("[*] Launching Gobuster...")
-                self.webserver = webserver.Webserver(self,currentPort)
-                self.webserver.directory_enumeration()
-                
+                webservers.append(currentPort)
+
+        # If an HTTP service exists on the target machine, enumerate it.
+        for webs in webservers:
+            print(f"[*] Launching Directory Enumeration on port {webs}...")
+            print("[*] Launching Gobuster...")
+            self.webserver = webserver.Webserver(self,webs)
+            self.webserver.directory_enumeration()
+            print("[*] Scanning the source code...")
+            self.webserver.sourcecode_scan()
 
 
 if __name__ == "__main__":
     print("\33[0;37;40m") 
     weben = mainProgram()
     weben.scan_ports()
+

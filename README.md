@@ -4,4 +4,3 @@ Usage : ./weben.py -T <Target-IP>
 
 Requirements:
 python3-nmap
-gobuster

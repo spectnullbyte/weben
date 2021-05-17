@@ -10,3 +10,6 @@ class Settings():
 
         # If you are looking for a particular word, you can add it in this list
         self.keys = ['pass','pwd','p4ss','flag','fl4g','key','hidden']
+
+        # Number of threads for directory enumeration
+        self.threads = 10

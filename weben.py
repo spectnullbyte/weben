@@ -53,7 +53,6 @@ class mainProgram():
         # If an HTTP service exists on the target machine, enumerate it.
         for webs in webservers:
             print(f"[*] Launching Directory Enumeration on port {webs}...")
-            print("[*] Launching Gobuster...")
             self.webserver = webserver.Webserver(self,webs)
             self.webserver.directory_enumeration()
             print("[*] Scanning the source code...")

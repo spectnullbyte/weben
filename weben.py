@@ -6,6 +6,7 @@ import nmap3
 
 import settings
 import webserver
+import ftpserver
 
 class mainProgram():
     """ Main Class of the program """
@@ -41,6 +42,7 @@ class mainProgram():
         nmap = nmap3.Nmap()
         versionScan = nmap.nmap_version_detection(self.target, args=f"-p {stringOfOpenPorts}") 
         webservers = []
+        ftpservers = []
         for p in versionScan[self.target]['ports']:
             currentPort = p['portid']
             print(f"[*] Port {currentPort} runs the following service : ")
@@ -49,14 +51,23 @@ class mainProgram():
             currentService = p['service']['name']
             if currentService == 'http':
                 webservers.append(currentPort)
+            elif currentService == 'ftp':
+                ftpservers.append(currentPort)
 
-        # If an HTTP service exists on the target machine, enumerate it.
+        # If an FTP service exists on the target machine, enumerate it.
+        for ftps in ftpservers:
+            print(f"[*] Launching FTP enumeration on port {ftps}...")
+            self.ftpserver = ftpserver.Ftpserver(self,ftps)
+            self.ftpserver.enumeration()
+
+        # If a web server is running  on the target machine, enumerate it.
         for webs in webservers:
             print(f"[*] Launching Directory Enumeration on port {webs}...")
             self.webserver = webserver.Webserver(self,webs)
             self.webserver.directory_enumeration()
             print("[*] Scanning the source code...")
             self.webserver.sourcecode_scan()
+
 
 
 if __name__ == "__main__":

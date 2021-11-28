@@ -14,9 +14,10 @@ class mainProgram():
         self.get_arguments()
         self.services = {}
         self.settings = settings.Settings()
+        self.display_banner()
 
     def get_arguments(self):
-        parse=argparse.ArgumentParser(description='Automatically scan a target IP')
+        parse=argparse.ArgumentParser(description=self.display_banner())
         parse.add_argument('-T', dest='target', help='The target IP address')
         parse.add_argument('-P', dest='port', help='The target port (If not specified, all ports will be scanned)')
         args = parse.parse_args()
@@ -67,7 +68,26 @@ class mainProgram():
             self.webserver.directory_enumeration()
             print("[*] Scanning the source code...")
             self.webserver.sourcecode_scan()
+    def display_banner(self):
+        text_banner = '''
+        
+888       888        888             888b    888
+888   o   888        888             8888b   888
+888  d8b  888        888             88888b  888
+888 d888b 888 .d88b. 88888b.  .d88b. 888Y88b 888
+888d88888b888d8P  Y8b888 "88bd8P  Y8b888 Y88b888
+88888P Y8888888888888888  88888888888888  Y88888
+8888P   Y8888Y8b.    888 d88PY8b.    888   Y8888
+888P     Y888 "Y8888 88888P"  "Y8888 888    Y888
 
+      Automatically scan a target IP
+
+WebeN v1.0
+Coded by Spect
+Nullbyte team
+        
+        '''
+        print(text_banner)
 
 
 if __name__ == "__main__":
